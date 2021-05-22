@@ -1,21 +1,32 @@
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from blog.models import Post
+from django.template import loader
+
+
+def stub_view(request, *args, **kwargs):
+    body = "Stub View\n\n"
+    if args:
+        body += "Args:\n"
+        body += "\n".join(["\t%s" % a for a in args])
+    if kwargs:
+        body += "Kwargs:\n"
+        body += "\n".join(["\t%s: %s" % i for i in kwargs.items()])
+    return HttpResponse(body, content_type="text/plain")
 
 
 def list_view(request):
-    context = {'posts': Post.objects.all()}
+    published = Post.objects.exclude(published_date__exact=None)
+    posts = published.order_by("-published_date")
+    context = {'posts': posts}
     return render(request, 'blog/list.html', context)
 
 
 def detail_view(request, post_id):
+    published = Post.objects.exclude(published_date__exact=None)
     try:
-        post = Post.objects.get(pk=post_id)
+        post = published.get(pk=post_id)
     except Post.DoesNotExist:
         raise Http404
-
-    if request.method == "POST":
-        raise Http404
-
     context = {'post': post}
     return render(request, 'blog/detail.html', context)
