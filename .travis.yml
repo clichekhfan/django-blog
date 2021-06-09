@@ -5,5 +5,5 @@ install:
   - pip install -r requirements.txt
   - python manage.py migrate
 script:
-  - black --check mysite
-  - python manage.py test mysite
+  - black --check
+  - python manage.py test
