@@ -1,0 +1,16 @@
+{% extends "mysite/base.html" %}
+{% block content %}
+{% load socialaccount %}
+
+<h1>My Blog Login</h1>
+{% if user.is_authenticated %}
+<p>Welcome {{ user.username }} !!!</p>
+{% else %}
+<form action="" method="POST">{% csrf_token %}
+  {{ form.as_p }}
+  <p><input type="submit" value="Log In"></p>
+</form>
+<a href="{% provider_login_url 'github' %}">Sign Up</a>
+
+{% endif %}
+{% endblock %}
